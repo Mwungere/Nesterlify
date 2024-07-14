@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Form</title>
+  <!-- Add any required CSS or JS libraries -->
+</head>
+<body>
+  <div class="container-fluid booking pb-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container">
+      <div class="bg-white shadow" style="padding: 35px">
+        <form id="bookingForm">
+          <div class="row g-2">
+            <div class="col-md-3">
+              <input
+                type="text"
+                id="origin1"
+                class="form-control"
+                placeholder="Origin"
+                required
+              />
+            </div>
+            <div class="col-md-3">
+              <input
+                type="text"
+                id="destination1"
+                class="form-control"
+                placeholder="Destination"
+                required
+              />
+            </div>
+            <div class="col-md-3">
+              <input
+                type="text"
+                id="departureDate1"
+                class="form-control"
+                placeholder="Departure Date (YYYY-MM-DD)"
+                required
+              />
+            </div>
+            <div class="col-md-3">
+              <input
+                type="text"
+                id="departureDate2"
+                class="form-control"
+                placeholder="Return Date (YYYY-MM-DD)"
+                required
+              />
+            </div>
+            <div class="col-md-3">
+              <select id="adults" class="form-select" required>
+                <option value="1" selected>1 Adult</option>
+                <option value="2">2 Adults</option>
+                <option value="3">3 Adults</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <input
+                type="number"
+                id="childAge"
+                class="form-control"
+                placeholder="Child Age (Optional)"
+                min="0"
+              />
+            </div>
+            <div class="col-md-3">
+              <select id="cabinClass" class="form-select" required>
+                <option value="economy" selected>Economy</option>
+                <option value="business">Business</option>
+                <option value="first">First</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <button type="submit" class="btn btn-primary w-100">Search</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('bookingForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const origin1 = document.getElementById('origin1').value;
+      const destination1 = document.getElementById('destination1').value;
+      const departureDate1 = document.getElementById('departureDate1').value;
+      const departureDate2 = document.getElementById('departureDate2').value;
+      const adults = document.getElementById('adults').value;
+      const childAge = document.getElementById('childAge').value;
+      const cabinClass = document.getElementById('cabinClass').value;
+
+      const passengers = Array.from({ length: adults }, () => ({ type: 'adult' }));
+      if (childAge) {
+        passengers.push({ age: parseInt(childAge, 10) });
+      }
+
+      const data = {
+        data: {
+          slices: [
+            {
+              origin: origin1,
+              destination: destination1,
+              departure_date: departureDate1
+            },
+            {
+              origin: destination1,
+              destination: origin1,
+              departure_date: departureDate2
+            }
+          ],
+          passengers: passengers,
+          cabin_class: cabinClass
+        }
+      };
+
+      fetch('http://localhost:3000/api/offer_requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html>
