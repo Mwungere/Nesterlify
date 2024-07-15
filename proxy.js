@@ -1,4 +1,3 @@
-// proxy.js
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
@@ -25,89 +24,53 @@ app.post("/api/offer_requests", async (req, res) => {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer duffel_test_yJD3QAOfPnZhTZxpRSJHQXlU3w49f1jyueLSkx-W9ET",
+          Authorization: "Bearer duffel_test_p94uLT5WAI3D9qRlbPD30LQ_t0MbGF9XUP6tBqf1Ixl",
           "Duffel-Version": "v1",
         },
       }
     );
     res.json(response.data);
   } catch (error) {
-    if (error.response) {
-      console.error("Error Status:", error.response.status);
-      console.error(
-        "Error Data:",
-        JSON.stringify(error.response.data, null, 2)
-      );
-      res.status(error.response.status).json(error.response.data);
-    } else {
-      console.error("Error Message:", error.message);
-      res.status(500).json({ error: error.message });
-    }
+    handleError(error, res);
   }
 });
 
-app.post("/api/offers", async (req, res) => {
-  const today = new Date().toISOString().split("T")[0];
-
-  const reqBody = {
-    data: {
-      slices: [
-        {
-          origin: "NYC",
-          destination: "ATL",
-          departure_date: today,
-        },
-        {
-          origin: "ATL",
-          destination: "NYC",
-          departure_date: calculateReturnDate(today, 11),
-        },
-      ],
-      passengers: [{ type: "adult" }, { type: "adult" }, { age: 1 }],
-      cabin_class: "business",
-    },
-  };
-
+app.get("/api/offers/:offer_request_id", async (req, res) => {
+  const { offer_request_id } = req.params;
   try {
-    const response = await axios.post(
-      "https://api.duffel.com/air/offers",
-      reqBody,
+    const response = await axios.get(
+      `https://api.duffel.com/air/offers?offer_request_id=${offer_request_id}`,
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer duffel_test_yJD3QAOfPnZhTZxpRSJHQXlU3w49f1jyueLSkx-W9ET",
+          Authorization: "Bearer duffel_test_p94uLT5WAI3D9qRlbPD30LQ_t0MbGF9XUP6tBqf1Ixl",
           "Duffel-Version": "v1",
         },
       }
     );
 
-    if (
-      response.data &&
-      response.data.offers &&
-      response.data.offers.length > 0
-    ) {
-      const offersToDisplay = response.data.offers.slice(0, 3);
+    if (response.data && response.data.data && response.data.data.length > 0) {
+      const offersToDisplay = response.data.data.slice(0, 3);
       res.json({ offers: offersToDisplay });
     } else {
       console.log("No offers found!");
       res.json({ message: "No offers found for your search criteria." });
     }
   } catch (error) {
-    if (error.response) {
-      console.error("Error Status:", error.response.status);
-      console.error(
-        "Error Data:",
-        JSON.stringify(error.response.data, null, 2)
-      );
-      res.status(error.response.status).json(error.response.data);
-    } else {
-      console.error("Error Message:", error.message);
-      res.status(500).json({ error: error.message });
-    }
+    handleError(error, res);
   }
 });
+
+function handleError(error, res) {
+  if (error.response) {
+    console.error("Error Status:", error.response.status);
+    console.error("Error Data:", JSON.stringify(error.response.data, null, 2));
+    res.status(error.response.status).json(error.response.data);
+  } else {
+    console.error("Error Message:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+}
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));

@@ -489,3 +489,10 @@
     padding-right: 0;
     border-right: none;
 }
+
+
+.logo-image {
+    width: 100px; /* Adjust as needed */
+    height: auto; /* Maintain aspect ratio */
+  }
+  
