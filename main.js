@@ -88,8 +88,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <p class="text-body mb-3">Flight from ${origin.city_name} (${origin.iata_city_code}) to ${destination.city_name} (${destination.iata_city_code})</p>
                     <div class="d-flex justify-content-between">
-                      <a class="btn btn-sm btn-primary rounded py-2 px-4" href="#">View Detail</a>
-                      <a class="btn btn-sm btn-dark rounded py-2 px-4" href="#">Book Now</a>
+                      <button class="btn btn-sm btn-primary rounded py-2 px-4">View Detail</button>
+                      <button class="btn btn-sm btn-dark rounded py-2 px-4">Book Now</button>
                     </div>
                   </div>
                 </div>

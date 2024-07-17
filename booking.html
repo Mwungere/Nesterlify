@@ -41,6 +41,8 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet" />
+
+    <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/> -->
   </head>
 
   <body>
@@ -181,14 +183,14 @@
       </div>
       <!-- Page Header End -->
 
-      <!-- Booking Start -->
+      <!-- search flights Start -->
       <div
         class="container-fluid booking pb-5 wow fadeIn"
         data-wow-delay="0.1s"
       >
         <div class="container">
           <div class="bg-white shadow" style="padding: 35px">
-            <form id="bookingForm">
+            <form id="searchingForm">
               <div class="row g-2">
                 <div class="col-md-3">
                   <input
@@ -259,9 +261,8 @@
           </div>
         </div>
       </div>
-      <!-- Booking End -->
 
-      <!-- Booking Start -->
+      <!-- flight cards Start -->
       <div class="container-xxl py-5">
         <div class="container">
           <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
@@ -274,7 +275,114 @@
           </div>
           <div class="row g-4" id="flights-container"></div>
         </div>
+
+        <!-- Modal Structure -->
+        <div
+          class="modal fade"
+          id="flightDetailModal"
+          tabindex="-1"
+          aria-labelledby="flightDetailModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="flightDetailModalLabel">
+                  Flight Details
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <!-- Flight details will be dynamically injected here -->
+                <div id="flightDetailsContent"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- Booking Form Modal -->
+      <div
+        class="modal fade"
+        id="bookingFormModal"
+        tabindex="-1"
+        aria-labelledby="bookingFormModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="bookingFormModalLabel">
+                Booking Form
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form id="bookingForm">
+                <div class="mb-3">
+                  <label for="fullName" class="form-label">Full Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="fullName"
+                    name="fullName"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="country" class="form-label">Country</label>
+                  <input
+                    type="text"
+                    name="country"
+                    class="form-control"
+                    id="country"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="gender" class="form-label">Gender</label>
+                  <select class="form-select" id="gender" name="gender" required>
+                    <option value="" selected disabled>Choose...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="dob" class="form-label">Date of Birth</label>
+                  <input type="date" class="form-control" id="dob" name="dob" required />
+                </div>
+                <div class="mb-3">
+                  <label for="passportNumber" class="form-label"
+                    >Passport Number</label
+                  >
+                  <input
+                    type="text"
+                    name="passportNumber"
+                    class="form-control"
+                    id="passportNumber"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary" id="nextButton">
+                  Next
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Booking End -->
 
       <!-- Newsletter Start -->
@@ -424,76 +532,21 @@
       ></a>
     </div>
 
+    <script src="flightSearch.js"></script>
     <script>
       const flightSearchResults = JSON.parse(
         localStorage.getItem("flightSearchResults")
       );
       if (flightSearchResults) {
-        const offersContainer = document.getElementById("flights-container");
-        offersContainer.innerHTML = ""; 
-
-        flightSearchResults.forEach((offer, index) => {
-          offer.slices.forEach((slice) => {
-            slice.segments.forEach((segment) => {
-              const flightCard = document.createElement("div");
-              flightCard.classList.add(
-                "col-lg-4",
-                "col-md-6",
-                "wow",
-                "fadeInUp"
-              );
-              flightCard.setAttribute("data-wow-delay", "0.1s");
-
-              const { total_currency, total_amount } = offer;
-              const {
-                origin,
-                destination,
-                operating_carrier,
-                duration,
-                operating_carrier_flight_number,
-              } = segment;
-
-              flightCard.innerHTML = `
-                  <div class="room-item shadow rounded overflow-hidden">
-                    <div class="position-relative">
-                      <img class="img-fluid logo-image" src="${operating_carrier.logo_symbol_url}" alt="${operating_carrier.name}">
-                      <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">${total_currency} ${total_amount}</small>
-                    </div>
-                    <div class="p-4 mt-2">
-                      <div class="d-flex justify-content-between mb-3">
-                        <h5 class="mb-0">${operating_carrier.name}</h5>
-                        <div class="ps-2">
-                          <small class="fa fa-star text-primary"></small>
-                          <small class="fa fa-star text-primary"></small>
-                          <small class="fa fa-star text-primary"></small>
-                          <small class="fa fa-star text-primary"></small>
-                          <small class="fa fa-star text-primary"></small>
-                        </div>
-                      </div>
-                      <div class="d-flex mb-3">
-                        <small class="border-end me-3 pe-3"><i class="fa fa-bed text-primary me-2"></i>${operating_carrier_flight_number}</small>
-                        <small class="border-end me-3 pe-3"><i class="fa fa-bath text-primary me-2"></i>${duration}</small>
-                        <small><i class="fa fa-wifi text-primary me-2"></i>Wifi</small>
-                      </div>
-                      <p class="text-body mb-3">Flight from ${origin.city_name} (${origin.iata_city_code}) to ${destination.city_name} (${destination.iata_city_code})</p>
-                      <div class="d-flex justify-content-between">
-                        <a class="btn btn-sm btn-primary rounded py-2 px-4" href="#">View Detail</a>
-                        <a class="btn btn-sm btn-dark rounded py-2 px-4" href="#">Book Now</a>
-                      </div>
-                    </div>
-                  </div>
-                `;
-
-              offersContainer.appendChild(flightCard);
-            });
-          });
-        });
+        console.log(flightSearchResults);
+        displayFlightResults(flightSearchResults);
       } else {
         console.error("No flight search results found in localStorage.");
       }
     </script>
+
+<script src="booking.js"></script>
     <!-- JavaScript Libraries -->
-    <script src="flightSearch.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="lib/wow/wow.min.js"></script>

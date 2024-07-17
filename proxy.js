@@ -1,21 +1,62 @@
+// proxy.js
+
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const path = require("path");
+const mongoose = require("mongoose");
 
 const app = express();
 const port = 3000;
 
+// MongoDB setup
+mongoose.connect("mongodb://localhost:27017/bookingDB", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const bookingSchema = new mongoose.Schema({
+  fullName: String,
+  country: String,
+  gender: String,
+  dob: String,
+  passportNumber: String,
+});
+
+const Booking = mongoose.model("Booking", bookingSchema);
+
+// Middleware
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
-function calculateReturnDate(startDate, daysToAdd) {
-  const date = new Date(startDate);
-  date.setDate(date.getDate() + daysToAdd);
-  return date.toISOString().split("T")[0];
-}
+// Handle booking submission
+app.post("/api/bookings", async (req, res) => {
+  const { fullName, country, gender, dob, passportNumber } = req.body;
 
+  try {
+    // Create a new booking document
+    const newBooking = new Booking({
+      fullName,
+      country,
+      gender,
+      dob,
+      passportNumber,
+    });
+
+    // Save the booking to MongoDB
+    const savedBooking = await newBooking.save();
+
+    // Respond with the saved booking data
+    res.status(201).json({ booking: savedBooking });
+
+  } catch (error) {
+    console.error('Error saving booking:', error);
+    res.status(500).json({ error: 'Error saving booking' });
+  }
+});
+
+// Existing API endpoints
 app.post("/api/offer_requests", async (req, res) => {
   try {
     const response = await axios.post(
@@ -61,6 +102,7 @@ app.get("/api/offers/:offer_request_id", async (req, res) => {
   }
 });
 
+// Error handling function
 function handleError(error, res) {
   if (error.response) {
     console.error("Error Status:", error.response.status);
@@ -72,10 +114,12 @@ function handleError(error, res) {
   }
 }
 
+// Serve index.html
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+// Start the server
 app.listen(port, () => {
   console.log(`Proxy server running at http://localhost:${port}`);
 });
