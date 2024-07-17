@@ -165,7 +165,7 @@ async function handleFlightSearch(event) {
   const cabinClass = document.getElementById('cabinClass').value;
 
   try {
-      const offerRequestResponse = await fetch("http://localhost:3000/api/offer_requests", {
+      const offerRequestResponse = await fetch("https://nesterlify-server-6.onrender.com/api/offer_requests", {
           method: "POST",
           headers: {
               "Content-Type": "application/json",
@@ -193,7 +193,7 @@ async function handleFlightSearch(event) {
       const offerRequestData = await offerRequestResponse.json();
       const offerRequestId = offerRequestData.data.id;
 
-      const response = await fetch(`http://localhost:3000/api/offers/${offerRequestId}`, {
+      const response = await fetch(`https://nesterlify-server-6.onrender.com/api/offers/${offerRequestId}`, {
           method: "GET",
           headers: {
               "Content-Type": "application/json",
@@ -228,7 +228,7 @@ async function handleFlightSearch(event) {
 // Function to handle booking form submission and send booking data
 async function handleBooking(formData) {
   try {
-    const response = await fetch('http://localhost:3000/api/bookings', {
+    const response = await fetch('https://nesterlify-server-6.onrender.com/api/bookings', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
