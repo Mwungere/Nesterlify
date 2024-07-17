@@ -1,5 +1,3 @@
-// proxy.js
-
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
@@ -8,6 +6,9 @@ const mongoose = require("mongoose");
 
 const app = express();
 const port = 3000;
+
+// Replace with your actual access token
+const DUFFEL_ACCESS_TOKEN = 'duffel_test_p94uLT5WAI3D9qRlbPD30LQ_t0MbGF9XUP6tBqf1Ixl';
 
 // MongoDB setup
 mongoose.connect("mongodb://localhost:27017/bookingDB", {
@@ -56,7 +57,7 @@ app.post("/api/bookings", async (req, res) => {
   }
 });
 
-// Existing API endpoints
+// Existing API endpoints for flights
 app.post("/api/offer_requests", async (req, res) => {
   try {
     const response = await axios.post(
@@ -65,7 +66,7 @@ app.post("/api/offer_requests", async (req, res) => {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer duffel_test_p94uLT5WAI3D9qRlbPD30LQ_t0MbGF9XUP6tBqf1Ixl",
+          "Authorization": `Bearer ${DUFFEL_ACCESS_TOKEN}`,
           "Duffel-Version": "v1",
         },
       }
@@ -84,7 +85,7 @@ app.get("/api/offers/:offer_request_id", async (req, res) => {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer duffel_test_p94uLT5WAI3D9qRlbPD30LQ_t0MbGF9XUP6tBqf1Ixl",
+          "Authorization": `Bearer ${DUFFEL_ACCESS_TOKEN}`,
           "Duffel-Version": "v1",
         },
       }
@@ -97,6 +98,26 @@ app.get("/api/offers/:offer_request_id", async (req, res) => {
       console.log("No offers found!");
       res.json({ message: "No offers found for your search criteria." });
     }
+  } catch (error) {
+    handleError(error, res);
+  }
+});
+
+// New endpoints for stays (accommodation search)
+app.post("/api/accommodation_search", async (req, res) => {
+  try {
+    const response = await axios.post(
+      "https://api.duffel.com/stays/search",
+      req.body,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${DUFFEL_ACCESS_TOKEN}`,
+          "Duffel-Version": "v1",
+        },
+      }
+    );
+    res.json(response.data);
   } catch (error) {
     handleError(error, res);
   }

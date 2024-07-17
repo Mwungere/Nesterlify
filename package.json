@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/DannyIRUMVA/nesterlify#readme",
   "dependencies": {
+    "@duffel/api": "^2.14.0",
+    "@duffel/components": "^3.7.17",
     "@nowpaymentsio/nowpayments-api-js": "^1.0.5",
     "axios": "^1.7.2",
     "cors": "^2.8.5",
