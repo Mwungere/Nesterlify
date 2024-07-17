@@ -539,7 +539,8 @@
       );
       if (flightSearchResults) {
         console.log(flightSearchResults);
-        displayFlightResults(flightSearchResults);
+        const offersContainer = document.getElementById("flights-container");
+        displayFlightResults(flightSearchResults, offersContainer);
       } else {
         console.error("No flight search results found in localStorage.");
       }

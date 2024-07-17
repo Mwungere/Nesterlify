@@ -7,8 +7,8 @@ function calculateReturnDate(startDate, daysToAdd) {
 
 
 // Function to display flight search results
-function displayFlightResults(results) {
-  const offersContainer = document.getElementById("flights-container");
+function displayFlightResults(results, container) {
+  const offersContainer = container;
   offersContainer.innerHTML = ""; // Clear existing offers
 
   // Set to track displayed operating carriers
@@ -369,10 +369,3 @@ function displayBookingConfirmation(flightNumber, departingAt, destination, flig
 
 // Event listener for flight search form submission
 document.getElementById("searchingForm").addEventListener("submit", handleFlightSearch);
-
-// Function to calculate and return date
-function calculateReturnDate(startDate, daysToAdd) {
-  const date = new Date(startDate);
-  date.setDate(date.getDate() + daysToAdd);
-  return date.toISOString().split("T")[0];
-}
